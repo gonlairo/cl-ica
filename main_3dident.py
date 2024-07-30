@@ -23,6 +23,7 @@ from infinite_iterator import InfiniteIterator
 import os
 import numpy as np
 from datetime import datetime
+import json
 
 # color only means object color, background color and spot light color -> 2*n_objects+1 dim
 # rotation ony means object rotation and spotlight rotation in euler angles -> 7*n_objects dim
@@ -864,7 +865,8 @@ else:
     )
 
 if args.mode == "supervised":
-    train_supervised(args, train_loader)
+    pass
+    #train_supervised(args, train_loader)
 elif args.mode == "unsupervised":
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     directory = os.path.join(args.save_model, f"3dident_icml_{timestamp}")
@@ -880,3 +882,10 @@ if args.save_model is not None:
     save_model(directory, "checkpoint_last.pt", total_loss_values,
                linear_disentanglement_scores,
                permutation_disentanglement_scores)
+
+    args_dict = vars(args)
+    args_json_path = os.path.join(directory, "args.json")
+    with open(args_json_path, 'w') as f:
+        json.dump(args_dict, f)
+
+    print(f"Saving args to: {args_json_path}")
