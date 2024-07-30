@@ -42,8 +42,7 @@ class ThreeDIdentDataset(torch.utils.data.Dataset):
 
         if latent_dimensions_to_use is not None:
             self.latents = np.ascontiguousarray(
-                self.latents[:, latent_dimensions_to_use]
-            )
+                self.latents[:, latent_dimensions_to_use])
 
         self.latent_space = latent_space
         dummy_sample = latent_space.sample_marginal(size=1, device="cpu")
@@ -62,9 +61,8 @@ class ThreeDIdentDataset(torch.utils.data.Dataset):
         self.loader = loader
 
         if approximate_mode:
-            self._index = faiss.index_factory(
-                self.latents.shape[1], "IVF1024_HNSW32,Flat"
-            )
+            self._index = faiss.index_factory(self.latents.shape[1],
+                                              "IVF1024_HNSW32,Flat")
             self._index.efSearch = 8
             self._index.nprobe = 10
         else:
@@ -73,9 +71,8 @@ class ThreeDIdentDataset(torch.utils.data.Dataset):
         if use_gpu:
             # make it an IVF GPU index
             self._index_cpu = self._index
-            self._index = faiss.index_cpu_to_gpu(
-                faiss.StandardGpuResources(), 0, self._index_cpu
-            )
+            self._index = faiss.index_cpu_to_gpu(faiss.StandardGpuResources(),
+                                                 0, self._index_cpu)
 
         if approximate_mode:
             self._index.train(self.latents)
@@ -104,7 +101,8 @@ class ThreeDIdentDataset(torch.utils.data.Dataset):
         z_tilde = self.latent_space.sample_conditional(z, size=1, device="cpu")
 
         distance_z, index_z = self._index.search(z.numpy(), 1)
-        distance_z_tilde, index_z_tilde = self._index.search(z_tilde.numpy(), 2)
+        distance_z_tilde, index_z_tilde = self._index.search(
+            z_tilde.numpy(), 2)
 
         index_z = index_z[0, 0]
 
@@ -121,8 +119,7 @@ class ThreeDIdentDataset(torch.utils.data.Dataset):
         path_z_tilde = self.image_paths[index_z_tilde]
 
         x, x_tilde = self.transform(self.loader(path_z)), self.transform(
-            self.loader(path_z_tilde)
-        )
+            self.loader(path_z_tilde))
 
         return (z.flatten(), z_tilde.flatten()), (x, x_tilde)
 
@@ -153,8 +150,7 @@ class SequentialThreeDIdentDataset(torch.utils.data.Dataset):
 
         if latent_dimensions_to_use is not None:
             self.latents = np.ascontiguousarray(
-                self.latents[:, latent_dimensions_to_use]
-            )
+                self.latents[:, latent_dimensions_to_use])
 
         if transform is None:
             transform = lambda x: x
