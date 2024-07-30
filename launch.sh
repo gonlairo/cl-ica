@@ -20,11 +20,6 @@ terminate() {
     echo "All background processes terminated."
 }
 
-if [ -z $1 ]; then
-  echo need to specify sweep
-  exit 1
-fi
-
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate dynamics
 which python
