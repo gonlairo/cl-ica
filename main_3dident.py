@@ -491,7 +491,7 @@ def train_unsupervised(args, train_loader):
         # and should also yield samples as if they were sampled from the marginal
         z3_rec = torch.roll(z1_rec, 1, 0)
 
-        total_loss_value, total_loss_per_item_value = loss(
+        total_loss_value, total_loss_per_item_value, losses_value = loss(
             None, None, None, z1_rec, z2_con_z1_rec, z3_rec)
         # print(total_loss_value)
 
@@ -824,7 +824,7 @@ else:
     if args.position_only:
         latent_dimensions_to_use = [0, 1, 2]
     elif args.rotation_and_color_only:
-        latent_dimensions_to_use = [3, 4, 5, 6, 7, 8, 9, 10]
+        latent_dimensions_to_use = [3, 4, 5, 6, 7, 8, 9]
     if args.no_spotlight_position:
         raise NotImplementedError(
             "This is only supported for non-periodic variables at the moment.")
@@ -871,6 +871,7 @@ elif args.mode == "unsupervised":
     timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     directory = os.path.join(args.save_model, f"3dident_icml_{timestamp}")
     os.makedirs(directory, exist_ok=True)
+    torch.set_float32_matmul_precision("high")
     total_loss_values, linear_disentanglement_scores, permutation_disentanglement_scores = train_unsupervised(
         args, train_loader)
 elif args.mode == "test":
