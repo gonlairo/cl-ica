@@ -229,6 +229,7 @@ def setup_latent_space(args, n_objects=1):
         )
 
         rotation_space = latent_spaces.LatentSpace(
+            #wrong, remove + 1
             spaces.NSphereSpace(n_objects * 3 + 1),
             lambda space, size, device: space.uniform(size, device=device),
             lambda space, z, size, device="cpu": space.von_mises_fisher(
@@ -375,7 +376,8 @@ def setup_f(args, n_non_angular_latents, n_angular_latents):
 
     if args.load_model is not None:
         print("device", device)
-        f.load_state_dict(torch.load(args.load_model, map_location=device))
+        state_dict = torch.load(args.load_model)['model_state_dict']
+        f.load_state_dict(state_dict, map_location=device)
         print("Model loaded:", args.load_model)
 
     if device == "cpu":
