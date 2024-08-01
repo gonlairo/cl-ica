@@ -376,8 +376,9 @@ def setup_f(args, n_non_angular_latents, n_angular_latents):
 
     if args.load_model is not None:
         print("device", device)
-        state_dict = torch.load(args.load_model)['model_state_dict']
-        f.load_state_dict(state_dict, map_location=device)
+        state_dict = torch.load(args.load_model,
+                                map_location=device)['model_state_dict']
+        f.load_state_dict(state_dict)
         print("Model loaded:", args.load_model)
 
     if device == "cpu":
